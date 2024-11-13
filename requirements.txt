@@ -1,5 +1,5 @@
-torch
-torchvision
+torch==2.5.1
+torchvision==0.20.1
 numpy==1.26.0
 transformers==4.37.0
 datasets==2.15.0
@@ -20,6 +20,3 @@ IPython
 
 # deepspeed==0.14.4
 pytest
-
-# install flash-attn from source
-flash-attn

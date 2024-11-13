@@ -31,12 +31,12 @@ conda create -n minikv python=3.9
 conda activate minikv
 pip install -r requirements.txt -Uv
 ```
-2. Install quant package from the KIVI repo
+2. Install quant package from the [KIVI repo](https://github.com/jy-yuan/KIVI/tree/main/quant)
 ```
 cd quant
 pip install -e .
 ```
-3. Install our selective flash-attention kernel implementation from <pending> 
+3. Install our [selective flash-attention kernel](https://github.com/jpli02/flash-attention/tree/accum) implementation
 ```
 cd flash-atten
 python setup.py install
