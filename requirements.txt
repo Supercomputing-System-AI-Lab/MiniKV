@@ -20,3 +20,7 @@ IPython
 
 # deepspeed==0.14.4
 pytest
+
+# tools for installing flash-attn
+packaging
+ninja
