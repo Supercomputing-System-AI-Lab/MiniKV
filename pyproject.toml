@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-exclude = ["quant*", "minikv*", "experiments*"]
+exclude = ["quant*", "experiments*"]
 
 [tool.wheel]
-exclude = ["quant*", "minikv*", "experiments*"]
+exclude = ["quant*", "experiments*"]
