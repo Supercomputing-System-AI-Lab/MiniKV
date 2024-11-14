@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minikv"
+version = "0.1.0"
+description = "MiniKV: Pushing the Limits of LLM Inference via 2-Bit Layer-Discriminative KV Cache"
+readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+    "torch==2.5.1",
+    "torchvision==0.20.1",
+    "numpy==1.26.0",
+    "transformers==4.37.0",
+    "datasets==2.15.0",
+    "accelerate==0.24.1",
+    "urllib3==2.1.0",
+    "bitsandbytes==0.41.2",
+    "chardet==5.2.0",
+    "scipy==1.11.4",
+    "deepdiff==6.7.1",
+    "diffusers==0.8.0",
+    "sentencepiece==0.1.99",
+    "protobuf==4.25.1",
+    "jieba==0.42.1",
+    "fuzzywuzzy==0.18.0",
+    "rouge==1.0.1",
+    "IPython==8.18.1",
+    "pytest==8.3.3",
+    "packaging==24.1",
+    "ninja"
+]
+
+[tool.setuptools.packages.find]
+exclude = ["quant*", "minikv*", "experiments*"]
+
+[tool.wheel]
+exclude = ["quant*", "minikv*", "experiments*"]
