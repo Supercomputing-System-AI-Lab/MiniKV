@@ -3,6 +3,8 @@ import itertools
 import numpy as np
 from tqdm import tqdm
 
+os.system("rm slurm_jobs/*")
+
 with open("sample.slurm", "r") as f:
     original = f.read()
 
@@ -44,3 +46,23 @@ for idx, job in enumerate(tqdm(job_list, desc="Creating SLURM jobs")):
     job_content = original + job
     with open(f"slurm_jobs/job_{idx}.slurm", "w") as f:
         f.write(job_content)
+
+# create variable budget jobs for mkv and mkv pyramid
+# total_budget = [0.2,0.4,0.5,0.7,0.8]
+# model = ['llama2-7b-chat-4k']
+# use_snaps = [True, False]
+# strategy = ['uniform', 'pyramid']
+# quant_bits = [2,16]
+
+# for idx, (b, m, s, u, q) in enumerate(tqdm(itertools.product(total_budget, model, strategy, use_snaps, quant_bits), desc="Creating SLURM jobs")):
+#     if u == False and q == 16:
+#         continue
+    
+#     if u == True:
+#         job = f"TOKENIZERS_PARALLELISM=false python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --prompt_sparsity_ratio {b} --eviction_strategy {s} --quant_bits {q} --group_size 16 --residual_length 128"
+#     else:
+#         job = f"python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --heavy_ratio {b/2} --recent_ratio {b/2} --eviction_strategy {s} --quant_bits {q} --group_size 16 --residual_length 128"
+    
+#     job_content = original + job
+#     with open(f"slurm_jobs/job_{idx}.slurm", "w") as f:
+#         f.write(job_content)
