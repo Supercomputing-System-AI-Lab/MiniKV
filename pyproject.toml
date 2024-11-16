@@ -30,7 +30,8 @@ dependencies = [
     "IPython==8.18.1",
     "pytest==8.3.3",
     "packaging==24.1",
-    "ninja"
+    "ninja",
+    "matplotlib"
 ]
 
 [tool.setuptools.packages.find]

@@ -24,3 +24,5 @@ pytest==8.3.3
 # tools for installing flash-attn
 packaging==24.1
 ninja
+
+matplotlib
