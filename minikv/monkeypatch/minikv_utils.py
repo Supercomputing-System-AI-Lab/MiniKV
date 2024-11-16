@@ -85,6 +85,7 @@ class PyramidSnapKVSelectionMechanism(SnapKVSelectionMechanism):
         for l in range(1, m-1):
             k[l] = k[0] + (k[m-1]-k[0]) / (m-1) * l
         self.prompt_sparsity_ratio = k[layer_id]
+        self.prompt_sparsity_ratio = min(1, self.prompt_sparsity_ratio) # snapKV with more than 0.5 prompt sparsity ratio distributes too much budget at the lower layers
         
         logger.info(f"[Pyramid SnapKV Selection Mechanism] {window_size = }, {self.prompt_sparsity_ratio = }, {kernel_size = }, {pooling = }, {layer_id = }, {num_layers = }")
 
