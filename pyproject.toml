@@ -10,8 +10,8 @@ readme = "README.md"
 requires-python = ">=3.9"
 
 dependencies = [
-    "torch==2.5.1",
-    "torchvision==0.20.1",
+    "torch==2.5.0",
+    "torchvision==0.20.0",
     "numpy==1.26.0",
     "transformers==4.37.0",
     "datasets==2.15.0",
@@ -28,9 +28,11 @@ dependencies = [
     "fuzzywuzzy==0.18.0",
     "rouge==1.0.1",
     "IPython==8.18.1",
-    "pytest==8.3.3",
     "packaging==24.1",
     "ninja",
+    "triton==3.1.0",
+    "pytest==8.2.1",
+    "flash_attn",
     "matplotlib"
 ]
 

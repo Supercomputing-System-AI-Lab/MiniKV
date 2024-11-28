@@ -24,23 +24,32 @@ Currently tested with `transformers==4.37.0` and `cuda 12.4.0`
 We tested on Nvidia A100 using Ubuntu 20.04, CUDA 12.4, PyTorch 2.5, and Python 3.10+.
 
 
+1. Install MiniKV
 ```
 git clone <>
 cd MiniKV
 conda create -n minikv python=3.9
 conda activate minikv
-pip install -r requirements.txt -Uv
+pip install -e .
 ```
+
 2. Install quant package from the [KIVI repo](https://github.com/jy-yuan/KIVI/tree/main/quant)
 ```
 cd quant
 pip install -e .
 ```
-3. Install our [selective flash-attention kernel](https://github.com/jpli02/flash-attention/tree/accum) implementation
+
+3. Install flash attention and our [selective flash-attention kernel](https://github.com/jpli02/selection_kernel/tree/main) implementation
 ```
-cd flash-atten
+git clone https://github.com/Dao-AILab/flash-attention.git
+cd flash-attention
+python setup.py install
+
+git clone https://github.com/jpli02/selection_kernel.git
+cd selection_kernel
 python setup.py install
 ```
+We recommend setting the `MAX_JOBS` environment variable to the number of available CPU cores to speed up the installation process.
 
 ## Quick Start
 ### Setup env
