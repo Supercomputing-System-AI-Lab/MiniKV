@@ -22,6 +22,8 @@ from quant.matmul import cuda_bmm_fA_qB_outer
 
 logger = logging.get_logger(__name__)
 
+from selection_kernel import selection_attention
+
 if is_flash_attn_2_available():
     from flash_attn import flash_attn_func, flash_attn_varlen_func
     from flash_attn.bert_padding import index_first_axis, pad_input, unpad_input  # noqa
@@ -141,19 +143,14 @@ def minikv_mistral_flash_attn2_forward(
                 
                 cumulative_attn_map = attn_weights.sum(2)
             else :
-                attn_output, cumulative_attn_map = flash_attn_func(
+                attn_output, cumulative_attn_map, LSE = selection_attention(
                     query_states.permute(0,2,1,3),
                     key_states.permute(0,2,1,3),
                     value_states.permute(0,2,1,3),
-                    dropout_p = 1e-8,
-                    causal=True,
-                    window_size=(-1,-1),
-                    alibi_slopes=None,
-                    deterministic=False,
-                    return_attn_probs=True,
+                    True,
+                    1.0 / math.sqrt(self.head_dim),
                 )
-                cumulative_attn_map = cumulative_attn_map[:,:,:,:query_states.shape[2]]
-                cumulative_attn_map = cumulative_attn_map.sum(2)
+                cumulative_attn_map = cumulative_attn_map.permute(0,2,1)
             
             key_states_compress, value_states_compress = self.kv_cluster.update_kv(key_states, query_states, value_states, cumulative_attn_map)   # only eviction here
             past_key_value.update(key_states_compress, value_states_compress, self.layer_idx, cache_kwargs) # quantization happens here
