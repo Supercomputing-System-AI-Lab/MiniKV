@@ -63,9 +63,10 @@ export PYTHONPATH=../../../MiniKV/:$PYTHONPATH
 1. To run **MiniKV**: H2O + quantization
    1. set `--use_snap False` to enable the H2O selection mechanism during pre-filling
    2. set `--heavy_ratio, --recent_ratio, --eviction_strategy` to control the eviction strategy
-   3. set `--use_eviction_flash` to either enable the selective flash-attention kernel or use the quadratic attention map to get the cumulative attention score
-   4. set `--quant_bits, group_size, residual_length` to control the quantization parameters
-   5. An example
+   3. set `--use_eviction_flash` to either enable the selective flash-attention kernel (True) or use the quadratic attention map to get the cumulative attention score (False)
+   4. set `--quant_bits, group_size, residual_length` to control the quantization parameters. We use (quant_bits, group_size, residual_length) = (2,16,128) in the paper.
+
+   An example
     ```bash
     python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_snap False --heavy_ratio 0.25 --recent_ratio 0.25 --eviction_strategy uniform/pyramid --use_eviction_flash False/True --quant_bits 2 --group_size 16 --residual_length 128
     ```
@@ -75,14 +76,14 @@ export PYTHONPATH=../../../MiniKV/:$PYTHONPATH
 python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_snap True --prompt_sparsity_ratio 0.4 --quant_bits 16
 ```
 
-3. Uncompressed model
+1. Uncompressed model
 ```bash
 python pred_minikv.py --model <model_name_or_path> --e --full_model True
 ```
 
-4. To run snapKV + quantization (results not reported in the paper)
+1. To run snapKV + quantization (results not reported in the paper)
 ```bash
-python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_snap False --heavy_ratio 0.2 --recent_ratio 0.2 --eviction_strategy uniform/pyramid --use_eviction_flash False/True --quant_bits 16
+python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_snap True --prompt_sparsity_ratio 0.4 --eviction_strategy uniform/pyramid --quant_bits 2 --group_size 16 --residual_length 128
 ```
 
 ### Create sbatch jobs
