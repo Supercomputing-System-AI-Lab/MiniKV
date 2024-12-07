@@ -54,6 +54,8 @@ class SnapKVSelectionMechanism():
                 attn_cache = F.avg_pool1d(attn_weights_sum, kernel_size = self.kernel_size, padding=self.kernel_size//2, stride=1)
             elif self.pooling == 'maxpool':
                 attn_cache = F.max_pool1d(attn_weights_sum, kernel_size = self.kernel_size, padding=self.kernel_size//2, stride=1)
+            elif self.pooling == None:
+                attn_cache = attn_weights_sum
             else:
                 raise ValueError('Pooling method not supported')
             indices = attn_cache.topk(int(self.prompt_sparsity_ratio * q_len) - self.window_size, dim=-1).indices

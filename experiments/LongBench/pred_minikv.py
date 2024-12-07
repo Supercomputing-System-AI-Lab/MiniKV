@@ -35,7 +35,11 @@ def parse_args(args=None):
     parser.add_argument('--quant_bits', type=int, help="The number of bits for key/value", default=2)
     parser.add_argument('--group_size', type=int, help="The group size", default=16)
     parser.add_argument('--residual_length', type=int, help="The residual length", default=128)
-    return parser.parse_args(args)
+    
+    args = parser.parse_args(args)
+    if args.pooling == 'None':
+        args.pooling = None
+    return args
 
 def process_decimal_string(str_):
     if not isinstance(str_, str):
@@ -297,7 +301,7 @@ def load_model_and_tokenizer(path, model_name, device, compress=False):
 if __name__ == '__main__':
     seed_everything(42)
     args = parse_args()
-    print(args)
+    print(f"\033[92m{args}\033[0m")
     # world_size = torch.cuda.device_count()
     # mp.set_start_method('spawn', force=True)
 
@@ -343,12 +347,12 @@ if __name__ == '__main__':
         if args.use_snap:
             if args.quant_bits == 16:
                 write_model_name = model_name + f"use_snap{args.use_snap}_p{process_decimal_string(args.prompt_sparsity_ratios)}_w{args.window_sizes}_k{args.kernel_sizes}_pool{args.pooling}"
-            elif args.quant_bits == 2:
+            else:
                 write_model_name = model_name + f"use_snap{args.use_snap}_p{process_decimal_string(args.prompt_sparsity_ratios)}_w{args.window_sizes}_k{args.kernel_sizes}_pool{args.pooling}_bits{args.quant_bits}_g{args.group_size}_r{args.residual_length}"
         else:
             if args.quant_bits == 16:
                 write_model_name = model_name + f"use_snap{args.use_snap}_h{process_decimal_string(args.heavy_ratio)}_r{process_decimal_string(args.recent_ratio)}_use_eviction_flash{args.use_eviction_flash}"
-            elif args.quant_bits == 2:
+            else:
                 write_model_name = model_name + f"use_snap{args.use_snap}_h{process_decimal_string(args.heavy_ratio)}_r{process_decimal_string(args.recent_ratio)}_use_eviction_flash{args.use_eviction_flash}_bits{args.quant_bits}_g{args.group_size}_r{args.residual_length}"
         
         if args.eviction_strategy == "pyramid":

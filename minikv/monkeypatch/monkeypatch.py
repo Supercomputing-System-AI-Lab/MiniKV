@@ -39,7 +39,7 @@ def replace_llama(args = None):
         warnings.warn(f"Transformers version {transformers_version} might not be compatible with minikv. SnapKV is tested with Transformers version {version_list}.")
       
     if not args.use_snap:
-        if args.quant_bits == 2:
+        if args.quant_bits != 16:
             logger.info(f"Loading MiniKV fwd pass")
             transformers.models.llama.modeling_llama.LlamaForCausalLM.prepare_inputs_for_generation = minikv_prepare_inputs_for_generation_llama
             transformers.models.llama.modeling_llama.LlamaFlashAttention2.forward = minikv_llama_flash_attn2_forward
@@ -47,7 +47,7 @@ def replace_llama(args = None):
             raise NotImplementedError(f"This configuration uses H2O during pre-fill and saves all the generated tokens, which is not the original H2O algo (and probably not what you want). Not supported: {args = }")
     
     else:
-        if args.quant_bits == 2:
+        if args.quant_bits != 16:
             logger.info(f"Loading Snap+MiniKV fwd pass")
             transformers.models.llama.modeling_llama.LlamaForCausalLM.prepare_inputs_for_generation = snap_minikv_prepare_inputs_for_generation_llama
             transformers.models.llama.modeling_llama.LlamaFlashAttention2.forward = snap_minikv_llama_flash_attn2_forward

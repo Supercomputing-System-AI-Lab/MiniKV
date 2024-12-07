@@ -12,7 +12,7 @@ from transformers.utils import (
     logging,
 )
 from minikv.monkeypatch.minikv_utils import init_minikv
-from minikv.monkeypatch.cache_impl import QuantizedCache
+from minikv.monkeypatch.cache_impl import QuantizedCache, get_attn_weights, get_attn_output
 
 import math
 from quant.new_pack import triton_quantize_and_pack_along_last_dim
@@ -146,41 +146,16 @@ def minikv_llama_flash_attn2_forward(
             # key_states, value_states = past_key_value.update(key_states, value_states, self.layer_idx, cache_kwargs)
             key_code, key_scale, key_mn, key_unq, value_code, value_scale, value_mn, value_unq = past_key_value.update(key_states, value_states, self.layer_idx, cache_kwargs)
             
-            # call mkv kernels here to get attn map + attn output
-            if key_code is not None:
-                att_qkquant = cuda_bmm_fA_qB_outer(self.config.group_size, query_states, key_code, key_scale, key_mn, self.config.quant_bits)
-            else:
-                att_qkquant = None
-                
-            if key_unq is not None:
-                att_qkfull = torch.matmul(query_states, key_unq.transpose(2,3))
-            else :
-                att_qkfull = None
-            
-            attn_list = []
-            if att_qkquant is not None:
-                attn_list.append(att_qkquant)
-            if att_qkfull is not None:
-                attn_list.append(att_qkfull)
-            attn_weights = torch.cat(attn_list, dim=-1) / math.sqrt(self.head_dim)
+            attn_weights = get_attn_weights(self.config.group_size, query_states, key_code, key_scale, key_mn, key_unq, self.config.quant_bits, self.head_dim)
             
             if attention_mask is not None:
                 attn_weights = attn_weights + attention_mask
                 attn_weights = torch.max(
                     attn_weights, torch.tensor(torch.finfo(attn_weights.dtype).min)
                 )
-            
             attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
 
-            value_full_length = value_unq.shape[-2] if value_unq is not None else 0
-            if value_code is None:
-                attn_output = torch.matmul(attn_weights, value_unq)
-            else:
-                if value_full_length != 0:
-                    attn_output = cuda_bmm_fA_qB_outer(self.config.group_size, attn_weights[:, :, :, :-value_full_length], value_code, value_scale, value_mn, self.config.quant_bits)
-                    attn_output += torch.matmul(attn_weights[:, :, :, -value_full_length:], value_unq)
-                else :  # list[:-0] does not work
-                    attn_output = cuda_bmm_fA_qB_outer(self.config.group_size, attn_weights, value_code, value_scale, value_mn, self.config.quant_bits)
+            attn_output = get_attn_output(self.config.group_size, attn_weights, value_code, value_scale, value_mn, value_unq, self.config.quant_bits)
                 
             if attn_output.size() != (bsz, self.num_heads, q_len, self.head_dim):
                 raise ValueError(
