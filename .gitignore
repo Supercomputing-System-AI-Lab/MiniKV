@@ -163,3 +163,4 @@ experiments/LongBench/pred*/*
 
 
 experiments/infinite_bench/data/*
+experiments/infinite_bench/results/*
