@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 notebooks/test*
 experiments/LongBench/pred*/*
+
+
+experiments/infinite_bench/data/*
