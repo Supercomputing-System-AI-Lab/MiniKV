@@ -11,6 +11,9 @@ from transformers.models.llama.modeling_llama import (
 from transformers.utils import (
     logging,
 )
+from transformers.modeling_flash_attention_utils import FlashAttentionKwargs
+from transformers.processing_utils import Unpack
+
 from minikv.monkeypatch.minikv_utils import init_minikv
 from minikv.monkeypatch.cache_impl import QuantizedCache, get_attn_weights, get_attn_output
 
@@ -45,7 +48,9 @@ def minikv_llama_flash_attn2_forward(
     past_key_value: Optional[Cache] = None,
     output_attentions: bool = False,
     use_cache: bool = False,
-    **kwargs,
+    cache_position: Optional[torch.LongTensor] = None,
+    position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,  # necessary, but kept here for BC
+    **kwargs: Unpack[FlashAttentionKwargs],
 ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[Tuple[torch.Tensor]]]:
     init_minikv(self, layer_id = self.layer_idx, num_layers = self.config.num_hidden_layers)
     
@@ -53,14 +58,6 @@ def minikv_llama_flash_attn2_forward(
         raise RuntimeError(f"past_key_value should be of type QuantizedCache, got {type(past_key_value)}")
         
     # LlamaFlashAttention2 attention does not support output_attentions
-    if "padding_mask" in kwargs:
-        warnings.warn(
-            "Passing `padding_mask` is deprecated and will be removed in v4.37. Please make sure use `attention_mask` instead.`"
-        )
-
-        # overwrite attention_mask with padding_mask
-        attention_mask = kwargs.pop("padding_mask")
-
     output_attentions = False
 
     bsz, q_len, _ = hidden_states.size()
@@ -94,8 +91,10 @@ def minikv_llama_flash_attn2_forward(
         else:
             kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
 
-    cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
-    query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+    # cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+    # query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+    cos, sin = position_embeddings
+    query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
     
     key_states = repeat_kv(key_states, self.num_key_value_groups)
     value_states = repeat_kv(value_states, self.num_key_value_groups)
@@ -175,7 +174,7 @@ def minikv_llama_flash_attn2_forward(
 def minikv_prepare_inputs_for_generation_llama(
     self, input_ids, past_key_values=None, attention_mask=None, inputs_embeds=None, **kwargs
 ):
-    if past_key_values is None:
+    if past_key_values is None or not isinstance(past_key_values, QuantizedCache):
         for layer in self.model.layers:
             layer.self_attn.kv_seq_len = 0
         past_key_values = QuantizedCache(quant_bits = self.config.quant_bits, group_size = self.config.group_size, residual_length = self.config.residual_length, num_layers = self.config.num_hidden_layers)

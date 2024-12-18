@@ -70,10 +70,20 @@ export PYTHONPATH=../../../MiniKV/:$PYTHONPATH
     ```bash
     python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_snap False --heavy_ratio 0.25 --recent_ratio 0.25 --eviction_strategy uniform/pyramid --use_eviction_flash False/True --quant_bits 2 --group_size 16 --residual_length 128
     ```
+    
+    Example usage for **Llama3.1-8b-instruct**
+    ```bash
+    python pred_minikv.py --model llama3-8b-instruct --e --full_model False --use_snap False --heavy_ratio 0.2655 --recent_ratio 0.2655 --eviction_strategy uniform --use_eviction_flash False --quant_bits 2 --group_size 16 --residual_length 128
+    ```
 
 2. To run snapKV
 ```bash
 python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_snap True --prompt_sparsity_ratio 0.4 --quant_bits 16
+```
+
+Example usage for **Llama3.1-8b-instruct**
+```bash
+python pred_minikv.py --model llama3-8b-instruct --e --full_model False --use_snap True --prompt_sparsity_ratio 0.4 --quant_bits 16
 ```
 
 1. Uncompressed model
@@ -81,9 +91,20 @@ python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_
 python pred_minikv.py --model <model_name_or_path> --e --full_model True
 ```
 
+Example usage for **Llama3.1-8b-instruct**
+```bash
+python pred_minikv.py --model llama3-8b-instruct --e --full_model True
+```
+
+
 1. To run snapKV + quantization (results not reported in the paper)
 ```bash
 python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_snap True --prompt_sparsity_ratio 0.4 --eviction_strategy uniform/pyramid --quant_bits 2 --group_size 16 --residual_length 128
+```
+
+Example usage for **Llama3.1-8b-instruct**
+```bash
+python pred_minikv.py --model llama3-8b-instruct --e --full_model False --use_snap True --prompt_sparsity_ratio 0.4 --eviction_strategy uniform --quant_bits 2 --group_size 16 --residual_length 128
 ```
 
 ### Create sbatch jobs
