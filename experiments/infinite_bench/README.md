@@ -11,5 +11,7 @@ pip install -r requirement.txt
 2. Run InfiniteBench with `SnapKV`:
 
 ```bash
-bash run_infinitebench.sh 
+bash run_infinitebench_snap.sh 
 ```
+
+3. You can add custom running script. The script format is same as Longbench.
