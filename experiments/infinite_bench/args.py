@@ -11,7 +11,7 @@ def parse_args(args=None):
     parser.add_argument('--verbose', action='store_true', help="Verbose mode")
     
     parser.add_argument('--model', type=str, default=None, choices=[
-        "llama2-7b-chat-4k", "llama2-13b-chat-4k", "longchat-v1.5-7b-32k", "xgen-7b-8k", 
+        "llama2-7b-chat-4k", "llama2-13b-chat-4k", "llama3-8b-instruct", "longchat-v1.5-7b-32k", "xgen-7b-8k", 
         "internlm-7b-8k", "chatglm2-6b", "chatglm2-6b-32k", "chatglm3-6b-32k", "vicuna-v1.5-7b-16k",
         "mistral-7B-instruct-v0.2", "mistral-7B-instruct-v0.1", "llama-2-7B-32k-instruct", "mixtral-8x7B-instruct-v0.1","lwm-text-chat-1m", "lwm-text-1m",
         "Yarn-llama-2-7b-128k"])

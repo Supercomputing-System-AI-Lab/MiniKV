@@ -157,7 +157,7 @@ def load_model_and_tokenizer(path, model_name, device, compress=False):
     if "chatglm" in model_name or "internlm" in model_name or "xgen" in model_name:
         tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
         model = AutoModelForCausalLM.from_pretrained(path, trust_remote_code=True, torch_dtype=torch.bfloat16).to(device)
-    elif "llama2" in model_name:
+    elif "llama2" in model_name or "llama3" in model_name:
         tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
         model = AutoModelForCausalLM.from_pretrained(path, trust_remote_code=True, torch_dtype = torch.float16, _attn_implementation = 'flash_attention_2').to(device)   # cant use torch_dtype=torch.bfloat16 as kivi's quantization kernels dont support it
     elif "longchat" in model_name or "vicuna" in model_name:

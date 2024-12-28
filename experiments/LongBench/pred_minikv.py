@@ -198,8 +198,8 @@ def load_model_and_tokenizer(path, model_name, device, compress=False):
         tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
         model = AutoModelForCausalLM.from_pretrained(path, trust_remote_code=True, torch_dtype=torch.bfloat16).to(device)
     elif "llama2" in model_name or "llama3" in model_name:
-        tokenizer = AutoTokenizer.from_pretrained(path)
-        model = AutoModelForCausalLM.from_pretrained(path, torch_dtype = torch.float16, _attn_implementation = 'flash_attention_2').to(device)   # cant use torch_dtype=torch.bfloat16 as kivi's quantization kernels dont support it
+        tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
+        model = AutoModelForCausalLM.from_pretrained(path, trust_remote_code=True, torch_dtype = torch.float16, _attn_implementation = 'flash_attention_2').to(device)   # cant use torch_dtype=torch.bfloat16 as kivi's quantization kernels dont support it
     elif "longchat" in model_name or "vicuna" in model_name:
         if not compress:
             model = AutoModelForCausalLM.from_pretrained(
