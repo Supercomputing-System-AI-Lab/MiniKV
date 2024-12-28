@@ -112,6 +112,10 @@ python pred_minikv.py --model llama3-8b-instruct --e --full_model False --use_sn
 2. Jobs are saved in `slurm_jobs/` directory.
 3. To run eval, ```bash launch_jobs.sh```
 
+### Running InfiniteBench
+
+1. `cd experiments/infinite_bench/`
+2. follow the description in `experiments/infinite_bench/README.md`.
 
 ## BibTeX
 ```
