@@ -164,3 +164,7 @@ experiments/LongBench/pred*/*
 
 experiments/infinite_bench/data/*
 experiments/infinite_bench/results/*
+
+experiments/Systems/slurm_jobs
+experiments/Systems/slurm_out
+experiments/Systems/results
