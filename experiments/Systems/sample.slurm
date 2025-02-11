@@ -1,13 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=MiniKV-system
-#SBATCH --partition=gpuA100x4
+#SBATCH --partition=gpuA100x4-interactive
 #SBATCH --account=bcjw-delta-gpu
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
-#SBATCH --time=2:00:00
+#SBATCH --time=1:00:00
 #SBATCH --output=slurm_out/%j.out
 #SBATCH --mem=180G # running into OOM error
-#SBATCH --constraint=perf&nvperf
 
 # module load python/3.11.6
 source ~/.bashrc
@@ -29,3 +28,5 @@ export PYTHONPATH=/u/ndani/MiniKV-Dev:$PYTHONPATH
 
 conda deactivate
 conda activate minikv
+
+cd /u/ndani/MiniKV-Dev
