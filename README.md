@@ -18,45 +18,64 @@
 -   **Hardware‑Accelerated Kernel:** Memory‑efficient kernels (FlashAttention‑compatible) in Triton for long-context inference.
   
 ## Requirements
-Currently tested with `transformers==4.37.0` and `cuda 12.4.0`
+Currently tested with `transformers==4.47.1` and `cuda 12.4.0`
 
 ## Installation
 We tested on Nvidia A100 using Ubuntu 20.04, CUDA 12.4, PyTorch 2.5, and Python 3.10+.
 
+0. Install uv for package management. You can use pip/conda as well, but uv is much faster.
+```
+pip install uv
+```
 
 1. Install MiniKV
 ```
 git clone <>
-cd MiniKV
-conda create -n minikv python=3.9
-conda activate minikv
-pip install -e .
+cd <>
+# create a uv virtual env at your desired location
+uv venv .venv --python 3.9
+
+source .venv/bin/activate
+uv pip install setuptools IPython wheel ninja numpy
+uv pip install torch==2.5.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+uv pip install -r requirements.txt
 ```
 
 2. Install quant package from the [KIVI repo](https://github.com/jy-yuan/KIVI/tree/main/quant)
 ```
 cd quant
-pip install -e .
+TORCH_CUDA_ARCH_LIST="9.0" uv pip install -e . --no-build-isolation # based on your GPU
 ```
 
-3. Install flash attention and our [selective flash-attention kernel](https://github.com/jpli02/selection_kernel/tree/main) implementation
+3. Install Triton from source
+```
+git clone https://github.com/triton-lang/triton.git triton_install
+# follow triton installation instructions
+```
+
+4. Install flash attention from souce
 ```
 git clone https://github.com/Dao-AILab/flash-attention.git
 cd flash-attention
-python setup.py install
+git submodule update --init --recursive
 
+uv pip install packaging wheel pip --no-build-isolation
+MAX_JOBS=8 TORCH_CUDA_ARCH_LIST="9.0" uv pip install -v -e . --no-build-isolation
+```
+
+5. Install the selection kernel for MiniKV
+```
 git clone https://github.com/jpli02/selection_kernel.git
 cd selection_kernel
-python setup.py install
+TORCH_CUDA_ARCH_LIST="9.0" uv pip install -v -e . --no-build-isolation
 ```
-We recommend setting the `MAX_JOBS` environment variable to the number of available CPU cores to speed up the installation process.
 
 ## Quick Start
 ### Setup env
 1. `cd experiments/LongBench/`
 2. Include minikv source files in the PYTHONPATH.
 ```bash
-export PYTHONPATH=../../../MiniKV/:$PYTHONPATH
+export PYTHONPATH=$(pwd)/../../:$PYTHONPATH
 ```
 
 ### Running pred_minikv.py

@@ -192,68 +192,14 @@ def seed_everything(seed):
     torch.cuda.manual_seed_all(seed)
 
 def load_model_and_tokenizer(path, model_name, device, compress=False):
-    if "chatglm" in model_name or "internlm" in model_name or "xgen" in model_name:
-        tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
-        model = AutoModelForCausalLM.from_pretrained(path, trust_remote_code=True, torch_dtype=torch.bfloat16).to(device)
-    elif "llama2" in model_name or "llama3" in model_name:
-        tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
-        model = AutoModelForCausalLM.from_pretrained(path, trust_remote_code=True, torch_dtype = torch.float16, _attn_implementation = 'flash_attention_2').to(device)   # cant use torch_dtype=torch.bfloat16 as kivi's quantization kernels dont support it
-    elif "longchat" in model_name or "vicuna" in model_name:
-        if not compress:
-            model = AutoModelForCausalLM.from_pretrained(
-                    path,
-                    torch_dtype=torch.float16,
-                    low_cpu_mem_usage=True,
-                    device_map="auto",
-                    use_cache=True,
-                    use_flash_attention_2=True
-                )
-        else:
-            model = AutoModelForCausalLM.from_pretrained(
-                    path,
-                    torch_dtype=torch.float16,
-                    low_cpu_mem_usage=True,
-                    device_map="auto",
-                    use_cache=True,
-                    use_flash_attention_2=True
-                )
-        tokenizer = AutoTokenizer.from_pretrained(
-            path,
-            use_fast=False,
-        )
-    elif "llama-2" in model_name or "lwm" in model_name:
-        if not compress:
-            model = AutoModelForCausalLM.from_pretrained(
-                    path,
-                    torch_dtype=torch.float16,
-                    low_cpu_mem_usage=True,
-                    device_map="auto",
-                    use_cache=True,
-                    use_flash_attention_2=True,
-                    trust_remote_code=True
-                )
-        else:
-            model = AutoModelForCausalLM.from_pretrained(
-                    path,
-                    torch_dtype=torch.float16,
-                    low_cpu_mem_usage=True,
-                    device_map="auto",
-                    use_cache=True,
-                    use_flash_attention_2=True,
-                    trust_remote_code=True
-                )
-        tokenizer = AutoTokenizer.from_pretrained(
-            path,
-            use_fast=False,
-            trust_remote_code=True
-        )
+    if "llama" in model_name:
+        tokenizer = AutoTokenizer.from_pretrained(path)
+        model = AutoModelForCausalLM.from_pretrained(path, torch_dtype = torch.float16, _attn_implementation = 'flash_attention_2').to(device)   # cant use torch_dtype=torch.bfloat16 as kivi's quantization kernels dont support it
     elif "mistral" in model_name:
         if not compress:
             model = AutoModelForCausalLM.from_pretrained(
                 path,
                 torch_dtype=torch.float16,
-                low_cpu_mem_usage=True,
-                device_map="auto",
                 use_cache=True,
                 use_flash_attention_2=True
             )
@@ -261,39 +207,14 @@ def load_model_and_tokenizer(path, model_name, device, compress=False):
             model = AutoModelForCausalLM.from_pretrained(
                 path,
                 torch_dtype=torch.float16,
-                low_cpu_mem_usage=True,
-                device_map="auto",
                 use_cache=True,
                 use_flash_attention_2=True
             )
+        model = model.to(device)
         tokenizer = AutoTokenizer.from_pretrained(
             path,
             padding_side="right",
             use_fast=False,
-        )
-    elif "mixtral" in model_name:
-        if not compress:
-            model = AutoModelForCausalLM.from_pretrained(
-                path,
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True,
-                device_map="auto",
-                use_cache=True,
-                use_flash_attention_2=True
-            )
-        else:
-            model = AutoModelForCausalLM.from_pretrained(
-                path,
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True,
-                device_map="auto",
-                use_cache=True,
-                use_flash_attention_2=True
-            )
-        tokenizer = AutoTokenizer.from_pretrained(
-            path,
-            # padding_side="right",
-            # use_fast=False,
         )
     else:
         raise ValueError(f"Model {model_name} not supported!")
@@ -314,8 +235,7 @@ if __name__ == '__main__':
     # define your model
     max_length = model2maxlen[model_name]
     if args.e:
-        datasets = ["narrativeqa", "musique", "qmsum", "2wikimqa", "qasper", "multifieldqa_en", "hotpotqa", "gov_report", "multi_news", \
-            "trec", "triviaqa", "samsum", "passage_count", "passage_retrieval_en", "lcc", "repobench-p"]
+        datasets = ["gov_report", "multi_news", "narrativeqa", "musique", "qmsum", "2wikimqa", "qasper", "multifieldqa_en", "hotpotqa", "trec", "triviaqa", "samsum", "passage_count", "passage_retrieval_en", "lcc", "repobench-p"]
     else:
         datasets = ["narrativeqa", "qasper", "multifieldqa_en", "hotpotqa", "2wikimqa", "musique", \
             "gov_report", "qmsum", "multi_news", "trec", "triviaqa", "samsum", \

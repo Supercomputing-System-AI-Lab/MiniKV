@@ -37,6 +37,8 @@ class SnapKVSelectionMechanism():
         assert key_states.shape[-2] == query_states.shape[-2]
         bsz, num_heads, q_len, head_dim = query_states.shape
         if int(self.prompt_sparsity_ratio * q_len) < self.window_size:
+            retained_tokens = max(1, int(self.prompt_sparsity_ratio * q_len))
+            key_states = key_states[:, :, -retained_tokens:, :]; value_states = value_states[:, :, -retained_tokens:, :]
             return key_states, value_states
         else:
             attn_weights = torch.matmul(query_states[..., -self.window_size:, :], key_states.transpose(2, 3)) / math.sqrt(head_dim)
