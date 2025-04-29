@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=snap
+#SBATCH --job-name=MiniKV
 #SBATCH --partition=ghx4
 #SBATCH --account=bcjw-dtai-gh
 #SBATCH --gres=gpu:1

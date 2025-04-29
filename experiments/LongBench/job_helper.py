@@ -8,20 +8,21 @@ os.system("rm slurm_jobs/*")
 with open("sample.slurm", "r") as f:
     original = f.read()
 
-total_budget = [0.04]
+total_budget = [0.50]
 model = ['llama2-7b-chat-4k', 'llama2-13b-chat-4k', 'llama3-8b-instruct', 'llama3-3b-instruct', 'llama3-1b-instruct', 'mistral-7B-instruct-v0.2']
-use_snaps = [True]
+use_snaps = [False]
 strategy = ['uniform']
-quant_bits = [16]
+use_eviction_flashs = [True]
+quant_bits = [2]
 
-for idx, (b, m, s, u, q) in enumerate(tqdm(itertools.product(total_budget, model, strategy, use_snaps, quant_bits), desc="Creating SLURM jobs")):
+for idx, (b, m, s, u, use_flash, q) in enumerate(tqdm(itertools.product(total_budget, model, strategy, use_snaps, use_eviction_flashs, quant_bits), desc="Creating SLURM jobs")):
     if u == False and q == 16:
         continue
     
     if u == True:
         job = f"python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --prompt_sparsity_ratio {b} --eviction_strategy {s} --quant_bits {q} --group_size 16 --residual_length 128"
     else:
-        job = f"python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --heavy_ratio {b/2} --recent_ratio {b/2} --eviction_strategy {s} --quant_bits {q} --group_size 16 --residual_length 128"
+        job = f"python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --heavy_ratio {b/2} --recent_ratio {b/2} --eviction_strategy {s} --use_eviction_flash {use_flash} --quant_bits {q} --group_size 16 --residual_length 128"
     
     job_content = original + job
     with open(f"slurm_jobs/job_{idx}.slurm", "w") as f:

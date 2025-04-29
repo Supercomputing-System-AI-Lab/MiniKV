@@ -21,8 +21,6 @@ import math
 from quant.new_pack import triton_quantize_and_pack_along_last_dim
 from quant.matmul import cuda_bmm_fA_qB_outer
 
-from selection_kernel import selection_attention
-
 logger = logging.get_logger(__name__)
 
 ##############
@@ -128,6 +126,7 @@ def minikv_llama_flash_attn2_forward(
                 
                 cumulative_attn_map = attn_weights.sum(2)
             else :
+                from selection_kernel import selection_attention
                 attn_output, cumulative_attn_map, LSE = selection_attention(
                     query_states.permute(0, 2, 1, 3),
                     key_states.permute(0, 2, 1, 3),

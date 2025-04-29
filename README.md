@@ -65,8 +65,8 @@ MAX_JOBS=8 TORCH_CUDA_ARCH_LIST="9.0" uv pip install -v -e . --no-build-isolatio
 
 5. Install the selection kernel for MiniKV
 ```
-git clone https://github.com/jpli02/selection_kernel.git
-cd selection_kernel
+git clone https://github.com/jpli02/selection_kernel.git selection_kernel_code
+cd selection_kernel_code
 TORCH_CUDA_ARCH_LIST="9.0" uv pip install -v -e . --no-build-isolation
 ```
 
