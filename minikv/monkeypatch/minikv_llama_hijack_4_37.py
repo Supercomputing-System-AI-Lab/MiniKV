@@ -127,14 +127,26 @@ def minikv_llama_flash_attn2_forward(
                 cumulative_attn_map = attn_weights.sum(2)
             else :
                 from selection_kernel import selection_attention
+                query_states_flash_fwd = query_states.permute(0, 2, 1, 3)
+                key_states_flash_fwd = key_states.permute(0, 2, 1, 3)
+                value_states_flash_fwd = value_states.permute(0, 2, 1, 3)
+                q_len = query_states_flash_fwd.shape[1]
+                q_len_pad = (math.ceil(q_len / 16) * 16) - q_len
+                if q_len_pad > 0:
+                    query_states_flash_fwd = F.pad(query_states_flash_fwd, (0, 0, 0, 0, 0, q_len_pad), value=0.0)
+                    key_states_flash_fwd = F.pad(key_states_flash_fwd, (0, 0, 0, 0, 0, q_len_pad), value=0.0)
+                    value_states_flash_fwd = F.pad(value_states_flash_fwd, (0, 0, 0, 0, 0, q_len_pad), value=0.0)
+                
                 attn_output, cumulative_attn_map, LSE = selection_attention(
-                    query_states.permute(0, 2, 1, 3),
-                    key_states.permute(0, 2, 1, 3),
-                    value_states.permute(0, 2, 1, 3),
+                    query_states_flash_fwd.contiguous(),
+                    key_states_flash_fwd.contiguous(),
+                    value_states_flash_fwd.contiguous(),
                     True,
                     1.0 / math.sqrt(self.head_dim),
                 )
                 cumulative_attn_map = cumulative_attn_map.permute(0, 2, 1)
+                cumulative_attn_map = cumulative_attn_map[:, :, :q_len]
+                attn_output = attn_output.permute(0, 2, 1, 3)[:, :, :q_len, :]
                 
             key_states_compress, value_states_compress = self.kv_cluster.update_kv(key_states, query_states, value_states, cumulative_attn_map)   # only eviction here
             past_key_value.update(key_states_compress, value_states_compress, self.layer_idx, cache_kwargs) # quantization happens here

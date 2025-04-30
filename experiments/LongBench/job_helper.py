@@ -20,9 +20,9 @@ for idx, (b, m, s, u, use_flash, q) in enumerate(tqdm(itertools.product(total_bu
         continue
     
     if u == True:
-        job = f"python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --prompt_sparsity_ratio {b} --eviction_strategy {s} --quant_bits {q} --group_size 16 --residual_length 128"
+        job = f"TOKENIZERS_PARALLELISM=False python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --prompt_sparsity_ratio {b} --eviction_strategy {s} --quant_bits {q} --group_size 16 --residual_length 128"
     else:
-        job = f"python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --heavy_ratio {b/2} --recent_ratio {b/2} --eviction_strategy {s} --use_eviction_flash {use_flash} --quant_bits {q} --group_size 16 --residual_length 128"
+        job = f"TOKENIZERS_PARALLELISM=False python pred_minikv.py --model {m} --e --full_model False --use_snap {u} --heavy_ratio {b/2} --recent_ratio {b/2} --eviction_strategy {s} --use_eviction_flash {use_flash} --quant_bits {q} --group_size 16 --residual_length 128"
     
     job_content = original + job
     with open(f"slurm_jobs/job_{idx}.slurm", "w") as f:
@@ -33,7 +33,7 @@ for idx, (b, m, s, u, use_flash, q) in enumerate(tqdm(itertools.product(total_bu
 # start_idx = len(os.listdir("slurm_jobs"))  # get the current index for new jobs
 # for m in tqdm(model):
 #     # Create full model jobs for each model
-#     job = f"python pred_minikv.py --model {m} --e --full_model True"
+#     job = f"TOKENIZERS_PARALLELISM=False python pred_minikv.py --model {m} --e --full_model True"
     
 #     job_content = original + job
 #     with open(f"slurm_jobs/job_{start_idx}.slurm", "w") as f:
