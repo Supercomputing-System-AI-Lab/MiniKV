@@ -1,0 +1,45 @@
+(.venv) (base) exouser@moe-gating:~/Desktop/KIVI$ cd quant
+(.venv) (base) exouser@moe-gating:~/Desktop/KIVI/quant$ TORCH_CUDA_ARCH_LIST="9.0" uv pip install -e . --no-build-isolation # based on your GPU
+Using Python 3.9.22 environment at: /home/exouser/Desktop/MiniKV-Dev/.venv
+Resolved 23 packages in 4.05s
+      Built kivi-gemv @ file:///home/exouser/Desktop/KIVI/quant
+Prepared 1 package in 58.58s
+Uninstalled 1 package in 1ms
+Installed 1 package in 1ms
+ ~ kivi-gemv==0.0.0 (from file:///home/exouser/Desktop/KIVI/quant)
+(.venv) (base) exouser@moe-gating:~/Desktop/KIVI/quant$ cd 
+(.venv) (base) exouser@moe-gating:~$ cd Desktop/MiniKV-Dev/experiments/LongBench/
+(.venv) (base) exouser@moe-gating:~/Desktop/MiniKV-Dev/experiments/LongBench$ python pred_minikv.py --model llama3-8b-instruct --e --full_model False --use_snap
+ False --heavy_ratio 0.2655 --recent_ratio 0.2655 --eviction_strategy uniform --use_eviction_flash False --quant_bits 2 --group_size 16 --residual_length 128
+Traceback (most recent call last):
+  File "/home/exouser/Desktop/MiniKV-Dev/experiments/LongBench/pred_minikv.py", line 10, in <module>
+    from minikv.monkeypatch.monkeypatch import replace_llama, replace_mistral, replace_mixtral
+ModuleNotFoundError: No module named 'minikv'
+(.venv) (base) exouser@moe-gating:~/Desktop/MiniKV-Dev/experiments/LongBench$ export PYTHONPATH=$(pwd)/../../:$PYTHONPATH
+(.venv) (base) exouser@moe-gating:~/Desktop/MiniKV-Dev/experiments/LongBench$ python pred_minikv.py --model llama3-8b-instruct --e --full_model False --use_snap
+ False --heavy_ratio 0.2655 --recent_ratio 0.2655 --eviction_strategy uniform --use_eviction_flash False --quant_bits 2 --group_size 16 --residual_length 128
+Traceback (most recent call last):
+  File "/home/exouser/Desktop/MiniKV-Dev/experiments/LongBench/pred_minikv.py", line 10, in <module>
+    from minikv.monkeypatch.monkeypatch import replace_llama, replace_mistral, replace_mixtral
+  File "/home/exouser/Desktop/MiniKV-Dev/minikv/monkeypatch/monkeypatch.py", line 4, in <module>
+    from minikv.monkeypatch.snap_minikv_llama_hijack_4_37 import \
+  File "/home/exouser/Desktop/MiniKV-Dev/minikv/monkeypatch/snap_minikv_llama_hijack_4_37.py", line 18, in <module>
+    from minikv.monkeypatch.cache_impl import QuantizedCache, get_attn_weights, get_attn_output
+  File "/home/exouser/Desktop/MiniKV-Dev/minikv/monkeypatch/cache_impl.py", line 9, in <module>
+    from kivi_gemv.new_pack import triton_quantize_and_pack_along_last_dim, quant_and_pack_vcache, unpack_and_dequant_vcache
+ModuleNotFoundError: No module named 'kivi_gemv.new_pack'; 'kivi_gemv' is not a package
+(.venv) (base) exouser@moe-gating:~/Desktop/MiniKV-Dev/experiments/LongBench$ cd
+(.venv) (base) exouser@moe-gating:~$ cd Desktop/KIVI/
+(.venv) (base) exouser@moe-gating:~/Desktop/KIVI$ ls
+LICENSE    config  eval_long_bench.py  imgmem_spd_test.py  models pred_long_bench.py  quant       scriptsvis
+README.md  docs    example.py       long_context_example.pymetrics.py passkey_examples.jsonl  pyproject.toml      requirements.txt  utils
+(.venv) (base) exouser@moe-gating:~/Desktop/KIVI$ 
+(.venv) (base) exouser@moe-gating:~/Desktop/KIVI$ ls
+LICENSE    config  eval_long_bench.py  imgmem_spd_test.py  models pred_long_bench.py  quant       scriptsvis
+README.md  docs    example.py       long_context_example.pymetrics.py passkey_examples.jsonl  pyproject.toml      requirements.txt  utils
+(.venv) (base) exouser@moe-gating:~/Desktop/KIVI$ TORCH_CUDA_ARCH_LIST="9.0" uv pip install -e . --no-build-isolation
+Using Python 3.9.22 environment at: /home/exouser/Desktop/MiniKV-Dev/.venv
+  x No solution found when resolving dependencies:
+  `-> Because the current Python version (3.9.22) does not satisfy Python>=3.10 and kivi==0.1.0 depends on Python>=3.10, we can conclude that kivi==0.1.0
+      cannot be used.
+      And because only kivi==0.1.0 is available and you require kivi, we can conclude that your requirements are unsatisfiable.

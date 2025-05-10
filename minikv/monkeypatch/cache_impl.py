@@ -6,8 +6,8 @@ from transformers.cache_utils import Cache, DynamicCache
 from typing import List, Optional, Tuple, Union
 
 import math
-from kivi_gemv.new_pack import triton_quantize_and_pack_along_last_dim, quant_and_pack_vcache, unpack_and_dequant_vcache
-from kivi_gemv.matmul import cuda_bmm_fA_qB_outer
+from kivi.new_pack import triton_quantize_and_pack_along_last_dim, quant_and_pack_vcache, unpack_and_dequant_vcache
+from kivi.matmul import cuda_bmm_fA_qB_outer
 
 def get_attn_weights(group_size, query_states, key_code, key_scale, key_mn, key_unq, bits, head_dim):
     '''
