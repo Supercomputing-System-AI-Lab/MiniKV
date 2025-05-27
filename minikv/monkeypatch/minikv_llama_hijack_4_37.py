@@ -126,6 +126,30 @@ def minikv_llama_flash_attn2_forward(
                 
                 cumulative_attn_map = attn_weights.sum(2)
             else :
+                ######pytorch version#######
+                attn_weights = torch.matmul(query_states, key_states.transpose(2,3)) / math.sqrt(self.head_dim)
+                
+                attention_mask = _make_causal_mask(
+                    bsz=bsz,
+                    tgt_len=q_len,
+                    past_key_values_length=0,
+                    dtype=query_states.dtype,
+                    device=query_states.device,
+                )
+                    
+                if attention_mask is not None:
+                    attn_weights = attn_weights + attention_mask
+                    attn_weights = torch.max(
+                        attn_weights, torch.tensor(torch.finfo(attn_weights.dtype).min)
+                    )
+                
+                attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
+                attn_output = torch.matmul(attn_weights, value_states)
+                attn_output_torch = attn_output.transpose(1, 2).contiguous()
+                
+                cumulative_attn_map_torch = attn_weights.sum(2)
+                ################################
+                
                 query_states_kernel = query_states.permute(0, 1, 2, 3) 
                 key_states_kernel = key_states.permute(0, 1, 2, 3)
                 value_states_kernel = value_states.permute(0, 1, 2, 3)
@@ -139,6 +163,11 @@ def minikv_llama_flash_attn2_forward(
                     1.0 / math.sqrt(self.head_dim),
                 )
                 attn_output = attn_output.permute(0, 2, 1, 3).contiguous()
+                print("kernel has NaNs?", torch.isnan(attn_output).any().item())
+                print("torch has NaNs? ", torch.isnan(attn_output_torch).any().item())
+
+                print(f"diff of output: {abs(attn_output - attn_output_torch).max().item()}")
+                print(f"diff of output: {abs(cumulative_attn_map_torch - cumulative_attn_map).max().item()}")
                 
             key_states_compress, value_states_compress = self.kv_cluster.update_kv(key_states, query_states, value_states, cumulative_attn_map)   # only eviction here
             past_key_value.update(key_states_compress, value_states_compress, self.layer_idx, cache_kwargs) # quantization happens here
