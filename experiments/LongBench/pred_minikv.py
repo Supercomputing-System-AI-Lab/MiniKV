@@ -74,12 +74,6 @@ def build_chat(tokenizer, prompt, model_name):
         print('internlm')
         prompt = f"<|User|>:{prompt}<eoh>\n<|Bot|>:"
     elif "mistral" in model_name or "mixtral" in model_name:
-        # print('mistral')
-        # from fastchat.model import get_conversation_template
-        # conv = get_conversation_template("mistral")
-        # conv.append_message(conv.roles[0], prompt)
-        # conv.append_message(conv.roles[1], None)
-        # prompt = conv.get_prompt()
         prompt = prompt
     return prompt
 
@@ -108,11 +102,8 @@ def get_pred_single_gpu(data, max_length, max_gen,
                         group_size=None,
                         residual_length=None,
                         ):
-    # device = torch.device(f'cuda:{rank}')
-    # device = model.device
     model, tokenizer = load_model_and_tokenizer(model2path[model_name], model_name, device = "cuda", compress=compress)
     device = model.device
-    printed = False
     preds = []
     for json_obj in tqdm(data):
         ############################################################################################################
@@ -225,17 +216,13 @@ if __name__ == '__main__':
     seed_everything(42)
     args = parse_args()
     print(f"\033[92m{args}\033[0m")
-    # world_size = torch.cuda.device_count()
-    # mp.set_start_method('spawn', force=True)
 
     model2path = json.load(open("config/model2path.json", "r"))
     model2maxlen = json.load(open("config/model2maxlen.json", "r"))
-    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model_name = args.model
-    # define your model
     max_length = model2maxlen[model_name]
     if args.e:
-        datasets = ["2wikimqa", "gov_report", "multi_news", "narrativeqa", "musique", "qmsum",  "qasper", "multifieldqa_en", "hotpotqa", "trec", "triviaqa", "samsum", "passage_count", "passage_retrieval_en", "lcc", "repobench-p"]
+        datasets = ["2wikimqa", "narrativeqa", "musique", "qmsum",  "qasper", "multifieldqa_en", "hotpotqa", "trec", "triviaqa", "samsum", "passage_count", "passage_retrieval_en", "lcc", "repobench-p", "gov_report", "multi_news"]
     else:
         datasets = ["narrativeqa", "qasper", "multifieldqa_en", "hotpotqa", "2wikimqa", "musique", \
             "gov_report", "qmsum", "multi_news", "trec", "triviaqa", "samsum", \
