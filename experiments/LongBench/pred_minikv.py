@@ -222,7 +222,7 @@ if __name__ == '__main__':
     model_name = args.model
     max_length = model2maxlen[model_name]
     if args.e:
-        datasets = ["2wikimqa", "narrativeqa", "musique", "qmsum",  "qasper", "multifieldqa_en", "hotpotqa", "trec", "triviaqa", "samsum", "passage_count", "passage_retrieval_en", "lcc", "repobench-p", "gov_report", "multi_news"]
+        datasets = ["trec", "2wikimqa", "narrativeqa", "musique", "qmsum",  "qasper", "multifieldqa_en", "hotpotqa", "triviaqa", "samsum", "passage_count", "passage_retrieval_en", "lcc", "repobench-p", "gov_report", "multi_news"]
     else:
         datasets = ["narrativeqa", "qasper", "multifieldqa_en", "hotpotqa", "2wikimqa", "musique", \
             "gov_report", "qmsum", "multi_news", "trec", "triviaqa", "samsum", \

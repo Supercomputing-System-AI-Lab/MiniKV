@@ -89,9 +89,10 @@ def minikv_llama_flash_attn2_forward(
         else:
             kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
 
-    # cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
-    # query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
-    cos, sin = position_embeddings
+    if position_embeddings is None:
+        cos, sin = self.rotary_emb(value_states, position_ids)
+    else:
+        cos, sin = position_embeddings
     query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
     
     key_states = repeat_kv(key_states, self.num_key_value_groups)
