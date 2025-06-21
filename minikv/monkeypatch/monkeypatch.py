@@ -43,6 +43,7 @@ def replace_llama(args = None):
             logger.info(f"Loading MiniKV fwd pass")
             transformers.models.llama.modeling_llama.LlamaForCausalLM.prepare_inputs_for_generation = minikv_prepare_inputs_for_generation_llama
             transformers.models.llama.modeling_llama.LlamaFlashAttention2.forward = minikv_llama_flash_attn2_forward
+            transformers.models.llama.modeling_llama.LlamaSdpaAttention.forward = minikv_llama_flash_attn2_forward
         else:
             raise NotImplementedError(f"This configuration uses H2O during pre-fill and saves all the generated tokens, which is not the original H2O algo (and probably not what you want). Not supported: {args = }")
     
