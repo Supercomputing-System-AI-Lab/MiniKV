@@ -59,3 +59,19 @@ python pred_minikv.py --model <model_name_or_path> --e --full_model False --use_
 1. `job_helper.py` creates sbatch files for running multiple experiments.
 2. Jobs are saved in `slurm_jobs/` directory.
 3. To run eval, ```bash launch_jobs.sh```
+
+
+## BibTeX
+```
+@article{sharma2024minikv,
+  title={Minikv: Pushing the limits of llm inference via 2-bit layer-discriminative kv cache},
+  author={Sharma, Akshat and Ding, Hangliang and Li, Jianping and Dani, Neel and Zhang, Minjia},
+  journal={arXiv preprint arXiv:2411.18077},
+  year={2024}
+}
+```
+
+## Acknowledgement
+
+-   We gratefully acknowledge the developers of [SnapKV](https://github.com/FasterDecoding/SnapKV) and [KiVi](https://github.com/jy-yuan/KIVI/tree/main)
+-   We are also inspired by the [FlashAttention](https://github.com/Dao-AILab/flash-attention) and [Triton FlashAttention](https://triton-lang.org/main/getting-started/tutorials/06-fused-attention.html)
