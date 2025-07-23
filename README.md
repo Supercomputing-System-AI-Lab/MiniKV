@@ -1,4 +1,12 @@
 # MiniKV
+
+
+<p align="center">
+<a href="https://2025.aclweb.org/"><img src="https://img.shields.io/badge/ACL-2025-FF6600.svg"></a>
+<a href="https://arxiv.org/pdf/2411.18077"><img src="https://img.shields.io/badge/Arxiv-2411.18077-B31B1B.svg"></a>
+<a href="https://supercomputing-system-ai-lab.github.io/projects/flexgaussian/"><img src="https://img.shields.io/badge/Project-Page-048C3D"></a>
+</p>
+
 ## Requirements
 Currently tested with `transformers==4.37.0` and `cuda 12.4.0`
 
