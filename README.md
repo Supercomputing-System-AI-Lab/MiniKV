@@ -11,6 +11,9 @@
 Currently tested with `transformers==4.37.0` and `cuda 12.4.0`
 
 ## Installation
+We tested on Nvidia A100 using Ubuntu 20.04, CUDA 12.4, PyTorch 2.5, and Python 3.10+.
+
+
 ```
 git clone <>
 cd MiniKV
