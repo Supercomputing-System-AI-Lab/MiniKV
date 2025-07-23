@@ -10,14 +10,13 @@
 ## Overview
 **MiniKV** is a lightweight, training‑free 2‑bit KV cache compression pipeline for LLM inference:
 - Achieves >80% compression of the KV cache while retaining accuracy on long‑context tasks
-- Hardware‑Accelerated Kernels
-    
+- Hardware‑Accelerated Triton Kernel calculates signals for downstream KV cache eviction
 
 ### Key features
 -   **Adaptive Quantization:** 2‑bit KV cache quantization with adaptive selection policies to maintain accuracy under high compression ratios.
 -   **Plug‑and‑Play Integration:** Works seamlessly with existing LLM inference stacks—no retraining or fine‑tuning required.
--   **Hardware‑Accelerated Kernel** Memory‑efficient kernels (FlashAttention‑compatible) in Triton for KV cache eviction policy.
--   
+-   **Hardware‑Accelerated Kernel:** Memory‑efficient kernels (FlashAttention‑compatible) in Triton for long-context inference.
+  
 ## Requirements
 Currently tested with `transformers==4.37.0` and `cuda 12.4.0`
 
