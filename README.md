@@ -6,6 +6,7 @@
 <a href="https://arxiv.org/pdf/2411.18077"><img src="https://img.shields.io/badge/Arxiv-2411.18077-B31B1B.svg"></a>
 <a href="https://supercomputing-system-ai-lab.github.io/projects/minikv/"><img src="https://img.shields.io/badge/Project-Page-048C3D"></a>
 </p>
+<img width="700" height="301" alt="image" src="https://github.com/user-attachments/assets/fbc2dc1b-ca74-42e6-a0bd-98078b40ff81" />
 
 ## Overview
 **MiniKV** is a lightweight, training‑free 2‑bit KV cache compression pipeline for LLM inference:
