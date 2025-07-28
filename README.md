@@ -19,7 +19,7 @@
 -   **Hardware‑Accelerated Kernel:** Memory‑efficient kernels (FlashAttention‑compatible) in Triton for long-context inference.
   
 ## Requirements
-Currently tested on an Nvidia GH200 with CUDA 12.4, gcc/g++ 12.3.0, `transformers==4.47.1`
+Currently tested on an Nvidia GH200 with gcc/g++ 12.3.0, CUDA 12.4, triton 3.3.0, `transformers==4.47.1`
 
 ## Installation
 0. Install uv for package management. You can use pip/conda as well, but uv is much faster.
@@ -46,10 +46,14 @@ cd quant
 TORCH_CUDA_ARCH_LIST="9.0" uv pip install -e . --no-build-isolation # based on your GPU
 ```
 
-3. Install Triton from source (we do this for a stable install on GH200, if working on a platform with pre-built wheels you can do a uv pip install here)
+3. Install Triton from source (we do this for a stable install on GH200, if working on a platform with pre-built wheels you should do a uv pip install here)
 ```
+# follow triton installation instructions, usually under `install from source` in readme.md
 git clone https://github.com/triton-lang/triton.git triton_install
-# follow triton installation instructions
+cd triton_install
+git checkout v3.3.0
+uv pip install -r python/requirements.txt --no-build-isolation
+uv pip install -e python --no-build-isolation
 ```
 
 4. Install flash attention from souce
@@ -57,9 +61,8 @@ git clone https://github.com/triton-lang/triton.git triton_install
 git clone https://github.com/Dao-AILab/flash-attention.git
 cd flash-attention
 git submodule update --init --recursive
-
 uv pip install packaging wheel pip --no-build-isolation
-MAX_JOBS=8 TORCH_CUDA_ARCH_LIST="9.0" uv pip install -v -e . --no-build-isolation
+MAX_JOBS=8 TORCH_CUDA_ARCH_LIST="9.0" uv pip install -v -e . --no-build-isolation # increasing max_jobs speeds up install but increases memory usage
 ```
 
 5. Install the selection kernel for MiniKV
