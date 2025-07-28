@@ -31,8 +31,8 @@ pip install uv
 
 1. Install MiniKV
 ```
-git clone <>
-cd <>
+git clone https://github.com/Supercomputing-System-AI-Lab/MiniKV.git
+cd MiniKV
 # create a uv virtual env at your desired location
 uv venv .venv --python 3.9
 
