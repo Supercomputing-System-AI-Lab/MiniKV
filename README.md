@@ -19,11 +19,9 @@
 -   **Hardware‑Accelerated Kernel:** Memory‑efficient kernels (FlashAttention‑compatible) in Triton for long-context inference.
   
 ## Requirements
-Currently tested with `transformers==4.47.1` and `cuda 12.4.0`
+Currently tested on an Nvidia GH200 with CUDA 12.4, gcc/g++ 12.3.0, `transformers==4.47.1`
 
 ## Installation
-We tested on Nvidia A100 using Ubuntu 20.04, CUDA 12.4, PyTorch 2.5, and Python 3.10+.
-
 0. Install uv for package management. You can use pip/conda as well, but uv is much faster.
 ```
 pip install uv
@@ -48,7 +46,7 @@ cd quant
 TORCH_CUDA_ARCH_LIST="9.0" uv pip install -e . --no-build-isolation # based on your GPU
 ```
 
-3. Install Triton from source
+3. Install Triton from source (we do this for a stable install on GH200, if working on a platform with pre-built wheels you can do a uv pip install here)
 ```
 git clone https://github.com/triton-lang/triton.git triton_install
 # follow triton installation instructions
